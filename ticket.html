@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de Venta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffc0e3 0%, #ffb3d9 100%);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #d81b60;
+            font-size: clamp(20px, 4vw, 24px);
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info p {
+            font-size: clamp(10px, 1.5vw, 11px);
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .user-info h3 {
+            font-size: clamp(12px, 2vw, 13px);
+            color: #333;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            flex: 1;
+            align-items: start;
+        }
+
+        .products-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 25px;
+            font-size: clamp(12px, 2vw, 14px);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: #ffc0e3;
+        }
+
+        .search-bar::before {
+            content: '🔍';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .product-item {
+            background: white;
+            border: 2px solid #f5f5f5;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .product-item:hover {
+            border-color: #ffc0e3;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-image {
+            width: 70px;
+            height: 70px;
+            min-width: 70px;
+            border-radius: 50%;
+            background: #fff5f8;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-details h3 {
+            font-size: clamp(14px, 2.5vw, 16px);
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .product-details .location {
+            font-size: clamp(10px, 1.5vw, 11px);
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .product-details .price-info {
+            display: flex;
+            gap: 10px;
+            font-size: clamp(11px, 1.8vw, 12px);
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quantity-box {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: clamp(12px, 2vw, 14px);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .cancel-btn {
+            color: #999;
+            font-size: clamp(14px, 2.5vw, 18px);
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .cancel-btn:hover {
+            color: #d81b60;
+        }
+
+        .summary-section {
+            background: #fafafa;
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-section h2 {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .summary-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .summary-table thead {
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .summary-table th {
+            text-align: left;
+            padding: 10px 5px;
+            font-size: clamp(11px, 1.8vw, 12px);
+            color: #666;
+            font-weight: 600;
+        }
+
+        .summary-table td {
+            padding: 12px 5px;
+            font-size: clamp(12px, 2vw, 13px);
+            color: #333;
+        }
+
+        .summary-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .total-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .total-row h3 {
+            font-size: clamp(14px, 2.5vw, 16px);
+            color: #333;
+            font-weight: 600;
+        }
+
+        .total-amount {
+            font-size: clamp(20px, 4vw, 24px);
+            color: #d81b60;
+            font-weight: 700;
+        }
+
+        .pay-button {
+            width: 100%;
+            background: linear-gradient(135deg, #ff6ec4 0%, #ff8fd4 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 18px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 110, 196, 0.3);
+        }
+
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 110, 196, 0.4);
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #d81b60 0%, #ff6ec4 100%);
+            padding: 15px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .footer h4 {
+            font-size: clamp(14px, 2.5vw, 16px);
+            margin-bottom: 3px;
+        }
+
+        .footer p {
+            font-size: clamp(10px, 1.5vw, 11px);
+            opacity: 0.9;
+        }
+
+        /* RESPONSIVE DESIGN */
+        
+        /* Tablets */
+        @media screen and (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .summary-section {
+                position: static;
+                order: 2;
+            }
+
+            .products-section {
+                order: 1;
+            }
+        }
+
+        /* Mobile devices */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-profile {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .user-info {
+                text-align: center;
+            }
+
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .main-content {
+                padding: 15px;
+                gap: 20px;
+            }
+
+            .product-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-details {
+                width: 100%;
+            }
+
+            .product-details .price-info {
+                justify-content: center;
+            }
+
+            .quantity-control {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .summary-section {
+                padding: 20px;
+            }
+
+            .footer {
+                padding: 15px;
+            }
+
+            .footer p {
+                margin-bottom: 5px;
+            }
+        }
+
+        /* Small mobile devices */
+        @media screen and (max-width: 480px) {
+            .header {
+                padding: 10px 15px;
+            }
+
+            .main-content {
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .product-item {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .product-image {
+                width: 60px;
+                height: 60px;
+                min-width: 60px;
+            }
+
+            .quantity-control {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .summary-section {
+                padding: 15px;
+            }
+
+            .summary-table {
+                font-size: 11px;
+            }
+
+            .summary-table th,
+            .summary-table td {
+                padding: 8px 3px;
+            }
+
+            .total-section {
+                padding: 15px;
+            }
+
+            .pay-button {
+                padding: 15px;
+            }
+        }
+
+        /* Large screens */
+        @media screen and (min-width: 1920px) {
+            .container {
+                max-width: 1920px;
+                margin: 0 auto;
+            }
+
+            .main-content {
+                max-width: 1600px;
+                margin: 0 auto;
+                padding: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Ticket de Venta</h1>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/150?img=47" alt="Usuario" class="user-avatar">
+                <div class="user-info">
+                    <p>Encargado panaderia y reposteria dulce/salada</p>
+                    <h3>Usuario del Sistema</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Products Section -->
+            <div class="products-section">
+                <div class="search-bar">
+                    <input type="text" placeholder="Buscar producto...">
+                </div>
+
+                <!-- Product 1 - Dona -->
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="https://em-content.zobj.net/source/apple/391/doughnut_1f369.png" alt="Dona">
+                    </div>
+                    <div class="product-details">
+                        <h3>Dona</h3>
+                        <p class="location">Hu. Piezas de Pan</p>
+                        <div class="price-info">
+                            <span>Precio unitario: $3.33</span>
+                            <span>Total: $9.99</span>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <div class="quantity-box">X 3</div>
+                        <div class="cancel-btn">Cancelar X</div>
+                    </div>
+                </div>
+
+                <!-- Product 2 - Pan Blanco -->
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="https://em-content.zobj.net/source/apple/391/baguette-bread_1f956.png" alt="Pan Blanco">
+                    </div>
+                    <div class="product-details">
+                        <h3>Pan Blanco</h3>
+                        <p class="location">Hu. Piezas de Pan</p>
+                        <div class="price-info">
+                            <span>Precio unitario: $5.55</span>
+                            <span>Total: $5.55</span>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <div class="quantity-box">X 2</div>
+                        <div class="cancel-btn">Cancelar X</div>
+                    </div>
+                </div>
+
+                <!-- Product 3 - Reposteria mousse de guayaba -->
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="https://em-content.zobj.net/source/apple/391/shortcake_1f370.png" alt="Mousse">
+                    </div>
+                    <div class="product-details">
+                        <h3>Reposteria mousse de guayaba</h3>
+                        <p class="location">Hu. Piezas de Pan</p>
+                        <div class="price-info">
+                            <span>Precio unitario: $5.55</span>
+                            <span>Total: $5.55</span>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <div class="quantity-box">X 3</div>
+                        <div class="cancel-btn">Cancelar X</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2>Resumen de la venta</h2>
+                
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>07new</td>
+                            <td>1</td>
+                            <td>$64</td>
+                        </tr>
+                        <tr>
+                            <td>09new</td>
+                            <td>3</td>
+                            <td>$45</td>
+                        </tr>
+                        <tr>
+                            <td>78buy</td>
+                            <td>3</td>
+                            <td>$89</td>
+                        </tr>
+                        <tr>
+                            <td>98buy</td>
+                            <td>7</td>
+                            <td>$100</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="total-section">
+                    <div class="total-row">
+                        <h3>TOTAL:</h3>
+                        <div class="total-amount">$307</div>
+                    </div>
+                    <button class="pay-button">PAGAR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h4>Powered by Rexxte</h4>
+            <p>Version 1.2.3</p>
+            <p>www.rexxte.com | contacto@rexxte.com | +57 350 000 0000</p>
+        </div>
+    </div>
+
+    <script>
+        // Código JavaScript sin funcionalidad, solo estructura
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Ticket de Venta cargado');
+            
+            // Referencias a elementos (sin funcionalidad)
+            const searchInput = document.querySelector('.search-bar input');
+            const payButton = document.querySelector('.pay-button');
+            const cancelButtons = document.querySelectorAll('.cancel-btn');
+            
+            // Event listeners placeholder (sin funcionalidad)
+            searchInput.addEventListener('input', function(e) {
+                // Placeholder para búsqueda
+            });
+            
+            payButton.addEventListener('click', function() {
+                // Placeholder para pago
+            });
+            
+            cancelButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Placeholder para cancelar producto
+                });
+            });
+        });
+    </script>
+</body>
+</html>
