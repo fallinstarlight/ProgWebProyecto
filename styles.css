@@ -72,12 +72,13 @@
 
 /*Botones*/
 .botones {
-  background-color: #f7a8c9;
+  background: linear-gradient(135deg, #f7a8c9 50%, #ff7eb4 100%);
   border-color: #f7a8c9;
+  cursor: pointer;
 }
 
 .botones:hover {
-  background-color: #ef6ba2;
+  background: linear-gradient(135deg, #ef6ba2 50%, #ef6ba2 100%);
   border-color: #ef6ba2;
   color: white;
   transition: background-color 0.3s ease;
@@ -90,7 +91,7 @@
 }
 
 .botones:focus {
-  background-color: #ef6ba2 !important;
+  background: linear-gradient(135deg, #ef6ba2 50%, #ef6ba2 100%) !important;
   border-color: #ef6ba2 !important;
   box-shadow: 0 0 0 0.05rem #ef6ba2;
 }
